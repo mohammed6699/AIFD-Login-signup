@@ -35,12 +35,19 @@ async function getDbUtils() {
   };
 }
 
-// Create a new poll
+
+/**
+ * Create a new poll with options and settings.
+ * Validates required fields and associates poll with user.
+ * @param {FormData} formData - Poll details and user info.
+ * @returns {Object} Success status and poll ID.
+ */
 export async function createPollAction(formData) {
   try {
     const title = formData.get("title");
     const description = formData.get("description");
     const question = formData.get("question");
+    // Only non-empty options
     const options = formData.getAll("options").filter(Boolean);
     const allowMultipleVotes = formData.get("allowMultipleVotes") === "true";
     const maxVotesPerOption = parseInt(formData.get("maxVotesPerOption")) || 1;
@@ -59,7 +66,7 @@ export async function createPollAction(formData) {
     // Create or get user
     const user = createOrGetUser(userEmail, userName);
 
-    // Create the poll
+    // Prepare poll data
     const pollData = {
       title,
       description,
@@ -71,16 +78,15 @@ export async function createPollAction(formData) {
       created_by: user.id,
     };
 
+    // Create poll and options
     const { id: pollId } = createPoll(pollData);
-
-    // Create poll options
     createPollOptions(pollId, options);
 
     revalidatePath("/polls");
-    
-    // Return success instead of redirecting
+    // Return success for UI feedback
     return { success: true, pollId };
   } catch (error) {
+    // Log and propagate error for UI
     console.error("Error creating poll:", error);
     throw error;
   }
@@ -225,7 +231,13 @@ export async function getUserPollsAction(userEmail) {
   }
 }
 
-// Submit a vote
+
+/**
+ * Submit votes for a poll. Handles multiple or single option voting.
+ * Associates votes with user if info provided.
+ * @param {FormData} formData - Contains pollId, optionIds, voter info.
+ * @returns {Object} Success status.
+ */
 export async function submitVoteAction(formData) {
   try {
     const pollId = formData.get("pollId");
@@ -233,6 +245,7 @@ export async function submitVoteAction(formData) {
     const voterEmail = formData.get("voterEmail");
     const voterName = formData.get("voterName");
 
+    // Validate vote submission
     if (!pollId || optionIds.length === 0) {
       throw new Error("Poll ID and at least one option are required");
     }
@@ -242,7 +255,7 @@ export async function submitVoteAction(formData) {
     // Create or get voter user
     const voter = createOrGetUser(voterEmail || "anonymous@example.com", voterName || "Anonymous");
 
-    // Create votes for each selected option
+    // Prepare votes for each selected option
     const votes = optionIds.map(optionId => ({
       poll_id: pollId,
       option_id: optionId,
@@ -256,6 +269,7 @@ export async function submitVoteAction(formData) {
     revalidatePath(`/polls/${pollId}`);
     return { success: true };
   } catch (error) {
+    // Log and propagate error for UI
     console.error("Error submitting vote:", error);
     throw error;
   }

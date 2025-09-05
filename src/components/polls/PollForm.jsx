@@ -7,6 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+
+/**
+ * Form component for creating a new poll.
+ * Handles dynamic option fields, validation, and submission.
+ * On success, redirects to poll list with user context.
+ */
 export function PollForm() {
   const [options, setOptions] = useState(["", ""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,26 +21,29 @@ export function PollForm() {
   const searchParams = useSearchParams();
   const userEmail = searchParams.get("user") || "";
 
+  // Update a specific poll option
   function updateOption(index, value) {
     setOptions(prev => prev.map((opt, i) => (i === index ? value : opt)));
   }
 
+  // Add a new option field
   function addOption() {
     setOptions(prev => [...prev, ""]);
   }
 
+  // Remove an option field (minimum 2 required)
   function removeOption(index) {
     if (options.length > 2) {
       setOptions(prev => prev.filter((_, i) => i !== index));
     }
   }
 
+  // Handle poll form submission
   async function handleSubmit(formData) {
     setIsSubmitting(true);
     setError("");
-    
     try {
-      // Add all options to formData
+      // Add all non-empty options to formData
       options.forEach((option, index) => {
         if (option.trim()) {
           formData.append("options", option.trim());
@@ -44,7 +53,6 @@ export function PollForm() {
       // Import the action dynamically to avoid SSR issues
       const { createPollAction } = await import("@/lib/actions");
       const result = await createPollAction(formData);
-      
       if (result.success) {
         // Get the user email from the form
         const formUserEmail = formData.get("userEmail");
@@ -52,6 +60,7 @@ export function PollForm() {
         router.push(`/polls?success=true&user=${encodeURIComponent(formUserEmail)}`);
       }
     } catch (error) {
+      // Show error message on failure
       console.error("Error creating poll:", error);
       setError("Failed to create poll: " + error.message);
     } finally {

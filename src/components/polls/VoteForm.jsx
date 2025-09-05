@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+
+/**
+ * Form component for submitting votes to a poll.
+ * Handles single/multiple selection, optional voter info, and submission.
+ * Shows confirmation after successful vote.
+ */
 export default function VoteForm({ poll }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [voterEmail, setVoterEmail] = useState("");
@@ -12,6 +18,7 @@ export default function VoteForm({ poll }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
 
+  // Toggle option selection (supports multiple votes if allowed)
   const handleOptionToggle = (optionId) => {
     if (poll.allow_multiple_votes) {
       setSelectedOptions(prev => 
@@ -24,35 +31,33 @@ export default function VoteForm({ poll }) {
     }
   };
 
+  // Handle vote form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (selectedOptions.length === 0) {
       alert("Please select at least one option");
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       const formData = new FormData();
       formData.append("pollId", poll.id);
       selectedOptions.forEach(optionId => {
         formData.append("optionIds", optionId);
       });
-      
+      // Attach optional voter info
       if (voterEmail) {
         formData.append("voterEmail", voterEmail);
       }
       if (voterName) {
         formData.append("voterName", voterName);
       }
-
       // Import the action dynamically to avoid SSR issues
       const { submitVoteAction } = await import("@/lib/actions");
       await submitVoteAction(formData);
       setHasVoted(true);
     } catch (error) {
+      // Show error message on failure
       console.error("Error submitting vote:", error);
       alert("Failed to submit vote: " + error.message);
     } finally {

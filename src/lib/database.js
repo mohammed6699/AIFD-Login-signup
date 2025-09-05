@@ -9,10 +9,15 @@ const __dirname = path.dirname(__filename);
 const dbPath = path.join(process.cwd(), 'polls.db');
 const db = new Database(dbPath);
 
-// Initialize database with tables
+
+/**
+ * Initialize the SQLite database with all required tables and indexes.
+ * Ensures schema for polls, options, votes, and users is present.
+ * Handles edge cases for unique constraints and foreign keys.
+ */
 export function initializeDatabase() {
   try {
-    // Create polls table
+    // Polls table: stores poll metadata and settings
     db.exec(`
       CREATE TABLE IF NOT EXISTS polls (
         id TEXT PRIMARY KEY,
@@ -31,7 +36,7 @@ export function initializeDatabase() {
       )
     `);
 
-    // Create poll_options table
+    // Poll options table: stores possible answers for each poll
     db.exec(`
       CREATE TABLE IF NOT EXISTS poll_options (
         id TEXT PRIMARY KEY,
@@ -43,7 +48,7 @@ export function initializeDatabase() {
       )
     `);
 
-    // Create votes table
+    // Votes table: records each user's vote, enforces uniqueness per poll/option/user/email
     db.exec(`
       CREATE TABLE IF NOT EXISTS votes (
         id TEXT PRIMARY KEY,
@@ -55,12 +60,12 @@ export function initializeDatabase() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (poll_id) REFERENCES polls (id) ON DELETE CASCADE,
         FOREIGN KEY (option_id) REFERENCES poll_options (id) ON DELETE CASCADE,
-        UNIQUE(poll_id, option_id, voter_id),
-        UNIQUE(poll_id, option_id, voter_email)
+        UNIQUE(poll_id, option_id, voter_id), -- Prevent duplicate votes by user
+        UNIQUE(poll_id, option_id, voter_email) -- Prevent duplicate votes by email
       )
     `);
 
-    // Create users table for simple authentication
+    // Users table: simple authentication for poll creators and voters
     db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
@@ -70,7 +75,7 @@ export function initializeDatabase() {
       )
     `);
 
-    // Create indexes for better performance
+    // Indexes for query performance
     db.exec('CREATE INDEX IF NOT EXISTS idx_polls_created_by ON polls(created_by)');
     db.exec('CREATE INDEX IF NOT EXISTS idx_polls_status ON polls(status)');
     db.exec('CREATE INDEX IF NOT EXISTS idx_polls_share_token ON polls(share_token)');
@@ -81,6 +86,7 @@ export function initializeDatabase() {
 
     console.log('Database initialized successfully');
   } catch (error) {
+    // Log errors for troubleshooting
     console.error('Error initializing database:', error);
   }
 }
