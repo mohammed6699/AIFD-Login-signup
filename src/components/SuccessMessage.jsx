@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
+import ContactForm from "./ContactForm";
+
 export default function SuccessMessage({ title, message }) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -36,6 +38,12 @@ export default function SuccessMessage({ title, message }) {
           <p className="mt-1 text-sm text-green-700">
             {message}
           </p>
+          {/* Show contact form after poll creation */}
+          {title?.toLowerCase().includes("poll created") && (
+            <div className="mt-4">
+              <ContactForm pollLink={message?.match(/https?:\/\/[^\s]+/)?.[0] || ""} />
+            </div>
+          )}
         </div>
         <div className="ml-4 flex-shrink-0">
           <Button
