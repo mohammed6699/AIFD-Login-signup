@@ -19,7 +19,7 @@ export default function SignInPage() {
       // Import the action dynamically to avoid SSR issues
       const { signInAction } = await import("@/lib/actions");
       await signInAction(formData);
-      router.replace("/polls");
+      router.push("/");
     } catch (err) {
       setError(err.message);
     } finally {

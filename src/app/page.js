@@ -39,9 +39,14 @@ export default async function PollsPage({ searchParams }) {
               )}
             </p>
           </div>
-          <Link href={`/polls/new?user=${encodeURIComponent(userEmail)}`}>
-            <Button>Create New Poll</Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href={`/polls/new?user=${encodeURIComponent(userEmail)}`}>
+              <Button>Create New Poll</Button>
+            </Link>
+            <Link href="/contact-page">
+              <Button className="contact-button" variant="outline">Contact</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Polls List */}
