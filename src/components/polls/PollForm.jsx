@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 
 /**
@@ -215,13 +216,20 @@ export function PollForm() {
         </div>
       </div>
 
-      <Button 
-        type="submit" 
-        disabled={isSubmitting}
-        className="w-full"
-      >
-        {isSubmitting ? "Creating poll..." : "Create poll"}
-      </Button>
+      <div className="flex gap-4">
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="w-full"
+        >
+          {isSubmitting ? "Creating poll..." : "Create poll"}
+        </Button>
+        <Link href="/" passHref>
+          <Button as="a" variant="outline" className="w-full">
+            Home
+          </Button>
+        </Link>
+      </div>
     </form>
   );
 }

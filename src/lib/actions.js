@@ -37,7 +37,9 @@ async function getDbUtils() {
 
 
 /**
- * Create a new poll with options and settings.
+ * 
+ * 
+ *  with options and settings.
  * Validates required fields and associates poll with user.
  * @param {FormData} formData - Poll details and user info.
  * @returns {Object} Success status and poll ID.
