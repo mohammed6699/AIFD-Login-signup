@@ -112,7 +112,7 @@ export default function PollsPage({ searchParams }) {
                     <Link href={`/polls/${poll.id}`}>View</Link>
                   </Button>
                   <Button asChild variant="outline" size="sm">
-                    <Link href={`/polls/share/${poll.share_token}`}>Share</Link>
+                    <Link href={`/polls/${poll.id}/results`}>Results</Link>
                   </Button>
                   <PollActions 
                     poll={poll} 

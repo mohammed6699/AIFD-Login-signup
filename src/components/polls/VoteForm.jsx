@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-
 /**
  * Form component for submitting votes to a poll.
  * Handles single/multiple selection, optional voter info, and submission.
@@ -40,21 +39,10 @@ export default function VoteForm({ poll }) {
     }
     setIsSubmitting(true);
     try {
-      const formData = new FormData();
-      formData.append("pollId", poll.id);
-      selectedOptions.forEach(optionId => {
-        formData.append("optionIds", optionId);
-      });
-      // Attach optional voter info
-      if (voterEmail) {
-        formData.append("voterEmail", voterEmail);
-      }
-      if (voterName) {
-        formData.append("voterName", voterName);
-      }
-      // Import the action dynamically to avoid SSR issues
-      const { submitVoteAction } = await import("@/lib/actions");
-      await submitVoteAction(formData);
+      
+      // Use the new castVote function
+      const { castVote } = await import("@/lib/poll-client");
+      await castVote(poll.id, selectedOptions, voterEmail, voterName);
       setHasVoted(true);
     } catch (error) {
       // Show error message on failure

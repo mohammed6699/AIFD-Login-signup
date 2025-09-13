@@ -87,7 +87,11 @@ export function deletePoll(pollId, userId) {
     throw new Error("Poll not found or you don't have permission to delete it");
   }
 
-  // Delete the poll (cascade will handle options and votes)
+  // Explicitly delete votes and options before deleting the poll
+  db.prepare(`DELETE FROM votes WHERE poll_id = ?`).run(pollId);
+  db.prepare(`DELETE FROM poll_options WHERE poll_id = ?`).run(pollId);
+
+  // Delete the poll
   const result = db.prepare(`
     DELETE FROM polls WHERE id = ? AND created_by = ?
   `).run(pollId, userId);

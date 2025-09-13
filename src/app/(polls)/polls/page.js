@@ -100,11 +100,11 @@ export default async function PollsPage({ searchParams }) {
                         View
                       </Button>
                     </Link>
-                    <Link href={`/polls/share/${poll.share_token}`}>
+                    {/* <Link href={`/polls/share/${poll.share_token}`}>
                       <Button variant="outline" size="sm">
                         Share
                       </Button>
-                    </Link>
+                    </Link> */}
                     <PollActions 
                       poll={poll} 
                       userEmail={userEmail}

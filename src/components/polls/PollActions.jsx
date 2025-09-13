@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import CopyButton from "@/components/CopyButton";
 
 export default function PollActions({ poll, userEmail }) {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -31,6 +32,8 @@ export default function PollActions({ poll, userEmail }) {
     }
   };
 
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/polls/share/${poll.share_token}`;
+
   return (
     <div className="flex gap-2">
       <Link href={`/polls/edit/${poll.id}?user=${encodeURIComponent(userEmail)}`}>
@@ -39,6 +42,8 @@ export default function PollActions({ poll, userEmail }) {
         </Button>
       </Link>
       
+      <CopyButton text={shareUrl} buttonText="Share" />
+
       {showDeleteConfirm ? (
         <div className="flex gap-1">
           <Button 

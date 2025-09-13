@@ -57,29 +57,6 @@ export default async function PollDetailPage({ params }) {
           </div>
         </div>
 
-        {/* Poll Results */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-2xl font-semibold mb-6">Results</h2>
-          <div className="space-y-4">
-            {poll.options?.map((option) => (
-              <div key={option.id} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{option.option_text}</span>
-                  <span className="text-sm text-gray-600">
-                    {option.vote_count} votes ({option.vote_percentage}%)
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-blue-600 h-3 rounded-full transition-all duration-300"
-                    style={{ width: `${option.vote_percentage}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Share Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <h2 className="text-2xl font-semibold mb-4">Share This Poll</h2>
@@ -103,6 +80,9 @@ export default async function PollDetailPage({ params }) {
         <div className="flex justify-center gap-4">
           <Link href="/polls">
             <Button variant="outline">Back to Polls</Button>
+          </Link>
+          <Link href={`/polls/${id}/results`}>
+            <Button>View Results</Button>
           </Link>
           <Link href="/polls/new">
             <Button>Create Another Poll</Button>
